@@ -1,0 +1,48 @@
+<script type="text/x-template" id="classSelectDialog">
+  <v-select class="jh-v-input" v-model="classSelectDialog_selected" color="success" :prefix="`${classSelectDialog_title}：`"
+    :items="classSelectDialog_filterText ? classSelectDialog_dataList_filter : classSelectDialog_dataList"
+    dense filled single-line>
+    <template v-slot:prepend-item>
+      <v-text-field prefix="搜索：" clearable v-model="classSelectDialog_filterText" class="mb-2" dense
+        filled single-line hide-details>
+      </v-text-field>
+    </template>
+  </v-select>
+</script>
+
+<script>
+  Vue.component("classSelectDialog", {
+    template: "#classSelectDialog",
+    vueComponent: 'classSelectDialog',
+    data: () => (window.vueData),
+    watch: {
+      classSelectDialog_filterText() {
+        this.doUiAction('categorySearch')
+      },
+    },
+    methods: {
+      async doUiAction(uiActionId, uiActionData) {
+        switch (uiActionId) {
+          case 'categorySearch':
+            await this.categorySearch();
+            break;
+          default:
+            console.error("[doUiAction] uiActionId not find", { uiActionId });
+            break;
+        }
+      },
+
+      // ---------- 分类搜索 uiAction >>>>>>>>>>>> --------
+      async categorySearch() {
+        const searchVal = this.classSelectDialog_filterText ? this.classSelectDialog_filterText.toLowerCase() : null;
+        const categoryList = _.cloneDeep(this.classSelectDialog_dataList);
+        if (searchVal) {
+          this.classSelectDialog_dataList_filter = categoryList.filter(category => category.text.toLowerCase().includes(searchVal) || category.text.includes(searchVal))
+        } else {
+          this.classSelectDialog_dataList_filter = categoryList;
+        }
+      },
+      // ---------- <<<<<<<<<<< 分类搜索 uiAction  --------
+    },
+  });
+</script>

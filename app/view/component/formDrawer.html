@@ -1,0 +1,103 @@
+<script type="text/x-template" id="form-drawer">
+  <v-navigation-drawer v-model="isUpdateDrawerShown" v-click-outside="drawerClickOutside" fixed temporary right width="80%" class="elevation-24">
+  <v-form ref="updateForm" lazy-validation>
+    <!--抽屉标题-->
+    <v-row>
+      <span class="text-subtitle-1 font-weight-medium pa-6 pl-7">修改信息{{formAction}}</span>
+    </v-row>
+    <!--抽屉表单-->
+    <v-row class="mt-0 px-4">
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">学生ID</span>
+        <v-text-field class="jh-v-input" :disabled="formAction !== 'add'" dense single-line filled label="学生ID" v-model="updateItem.studentId" :rules="validationRules.requireRules"></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">班级ID</span>
+        <v-select class="jh-v-input" dense single-line filled clearable label="班级ID" v-model="updateItem.classId" :items="constantObj.classId"></v-select>
+      </v-col>
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">学生名字</span>
+        <v-text-field class="jh-v-input" dense single-line filled label="学生名字" v-model="updateItem.name"></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">年级</span>
+        <v-select class="jh-v-input" dense single-line filled clearable label="年级" v-model="updateItem.level" :items="constantObj.level"></v-select>
+      </v-col>
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">性别</span>
+        <v-select class="jh-v-input" dense single-line filled clearable label="性别" v-model="updateItem.gender" :items="constantObj.gender"></v-select>
+      </v-col>
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">出生日期</span>
+        <v-menu class="jh-v-input" transition="scale-transition" offset-y min-width="auto">
+          <template v-slot:activator="{on, attrs}">
+            <v-text-field v-bind="attrs" v-on="on" v-model="updateItem.dateOfBirth" class="jh-v-input" dense single-line filled readonly label="出生日期"></v-text-field>
+          </template>
+          <v-date-picker color="success" elevation="20" v-model="updateItem.dateOfBirth"></v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">身高</span>
+        <v-text-field class="jh-v-input" dense single-line filled label="身高" v-model="updateItem.bodyHeight"></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">学生状态</span>
+        <v-select class="jh-v-input" dense single-line filled clearable label="学生状态" v-model="updateItem.studentStatus" :items="constantObj.studentStatus"></v-select>
+      </v-col>
+      <v-col cols="12" sm="12" md="4">
+        <span class="jh-input-label">备注</span>
+        <v-text-field class="jh-v-input" dense single-line filled label="备注" v-model="updateItem.remarks"></v-text-field>
+      </v-col>
+    </v-row>
+    <!--抽屉操作按钮-->
+    <v-row class="justify-end mx-0 mt-8 px-6">
+      <v-btn color="success" small @click="doUiAction(formAction == 'add'? 'createItem': 'updateItem')">保存</v-btn>
+      <v-btn class="ml-2" small @click="isUpdateDrawerShown = false">取消
+      </v-btn>
+    </v-row>
+  </v-form>
+
+  <!--抽屉关闭按钮-->
+  <v-btn
+    elevation="0" color="success" fab absolute top left small tile class="drawer-close-float-btn"
+    @click="isUpdateDrawerShown = false">
+    <v-icon>mdi-close</v-icon>
+  </v-btn>
+  </v-navigation-drawer>
+</script>
+
+<script>
+Vue.component("form-drawer", {
+  template: "#form-drawer",
+  vueComponent: 'formDrawer',
+  mixins: [window.jianghuUiActionMixins],
+  data: () => (window.vueData),
+  computed: {
+
+  },
+  methods: {
+    openFormDrawer() {
+      this.isUpdateDrawerShown = true;
+    },
+    async prepareFormValidate() {
+      if (await this.$refs.updateForm.validate()) {
+        return true;
+      }
+      throw new Error("请完善表单信息")
+    },
+    async confirmCreateItemDialog() {
+      if (await window.confirmDialog({title: this.formAction === 'add' ? "新增" : "更新", content: `确定${this.formAction === 'add' ? "新增" : "更新"}吗？`}) === false) {
+        throw new Error("[confirmFormDialog] 否");
+      }
+    },
+    closeFormDrawer() {
+      this.isUpdateDrawerShown = false;
+      this.updateItem = {};
+      this.updateActionData = null;
+      this.updateItemId = null;
+    },
+  },
+});
+</script>
+<style>
+</style>

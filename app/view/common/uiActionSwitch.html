@@ -1,0 +1,59 @@
+<!--uiActionSwitch.html >>>>>>>>>>>>> -->
+<script>
+window.doUiActionSwitch = async (uiActionId, uiActionObj = {}) => {
+  const root = window.$vueComponent.root;
+  const classSelectDialog = window.$vueComponent.classSelectDialog;
+  const formDrawer = window.$vueComponent.formDrawer;
+  switch (uiActionId) {
+    case 'openClassSelectDialog':
+      await classSelectDialog.openClassSelectDialog();
+      break;
+    case 'getTableData':
+      await root.getTableData();
+      await root.computedTableData(uiActionObj);
+      break;
+    case 'startCreateItem':
+      await root.prepareCreateFormData();
+      await formDrawer.openFormDrawer();
+      break;
+    case 'createItem':
+      await formDrawer.prepareFormValidate();
+      await root.confirmCreateItemDialog();
+      await root.prepareDoCreateItem();
+      await root.doCreateItem();
+      await formDrawer.closeFormDrawer();
+      await root.getTableData();
+      await root.computedTableData(uiActionObj);
+      break;
+    case 'startUpdateItem':
+      await root.prepareUpdateFormData(uiActionObj);
+      await formDrawer.openFormDrawer();
+      break;
+    case 'updateItem':
+      await formDrawer.prepareFormValidate();
+      await root.confirmUpdateItemDialog();
+      await root.prepareDoUpdateItem();
+      await root.doUpdateItem();
+      await formDrawer.closeFormDrawer();
+      await root.getTableData();
+      await root.computedTableData(uiActionObj);
+      break;
+    case 'deleteItem':
+      await root.prepareDeleteFormData(uiActionObj);
+      await root.confirmDeleteItemDialog();
+      await root.prepareDoDeleteItem();
+      await root.doDeleteItem();
+      await root.clearDeleteItem();
+      await root.getTableData();
+      await root.computedTableData(uiActionObj);
+      break;
+    case 'computedTableData':
+      await root.computedTableData(uiActionObj);
+      break;
+    default:
+      console.error("[root] uiActionId not find", {uiActionId});
+      break;
+  }
+}
+</script>
+<!-- <<<<<<<<<<<<< uiActionSwitch.html -->
